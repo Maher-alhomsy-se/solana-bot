@@ -17,9 +17,11 @@ async function main() {
 
     if (fdv > 50000) {
       console.log(
-        '🚀 FDV is high. Attempting to buy 0.05 SOL of this token...'
+        '🚀 FDV is high. Attempting to buy 0.001 SOL of this token...'
       );
       await swapSolToToken(addrStr);
+    } else {
+      console.log('FDV is low');
     }
   } catch (error) {
     console.log('Error in FDV');
