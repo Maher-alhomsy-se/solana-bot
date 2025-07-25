@@ -17,6 +17,7 @@
     "axios": "^1.10.0",
     "bs58": "^6.0.0",
     "dotenv": "^17.2.0",
+    "mongodb": "^6.18.0",
     "node-telegram-bot-api": "^0.66.0"
   }
 }
