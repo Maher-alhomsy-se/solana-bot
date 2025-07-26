@@ -54,7 +54,7 @@ async function swapSolToToken(tokenMint) {
     tx.serialize()
   );
 
-  console.log('✅ Swap succeeded. Tx:', signature);
+  return signature;
 }
 
 export default swapSolToToken;
