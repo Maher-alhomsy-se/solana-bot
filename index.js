@@ -6,6 +6,7 @@ import {
   balanceCollection,
   balanceHistoryCollection,
 } from './lib/db.js';
+import bot from './bot.js';
 import delay from './delay.js';
 import swapTokenToSol from './swapTokenForSol.js';
 import sendSolToUser from './utils/sendSolToUser.js';
