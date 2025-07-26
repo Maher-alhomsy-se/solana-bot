@@ -1,28 +1,11 @@
 import {
-  Keypair,
   PublicKey,
-  Connection,
-  clusterApiUrl,
   VersionedTransaction,
   sendAndConfirmRawTransaction,
 } from '@solana/web3.js';
-import bs58 from 'bs58';
-import dotenv from 'dotenv';
-import { createJupiterApiClient } from '@jup-ag/api';
 import { getAssociatedTokenAddress, getAccount } from '@solana/spl-token';
 
-dotenv.config();
-
-const PRIVATE_KEY = process.env.PRIVATE_KEY_BASE58;
-
-const payer = Keypair.fromSecretKey(bs58.decode(PRIVATE_KEY));
-const connection = new Connection(clusterApiUrl('mainnet-beta'), {
-  commitment: 'confirmed',
-});
-
-const jupiter = createJupiterApiClient({
-  basePath: 'https://lite-api.jup.ag/swap/v1',
-});
+import { connection, jupiter, payer } from './config/jupiter.js';
 
 async function getTokenBalance(tokenMint) {
   const ata = await getAssociatedTokenAddress(
@@ -50,10 +33,10 @@ async function swapTokenToSol(tokenMint) {
   console.log(`🔁 Swapping ${Number(balance) / 1e6} ${tokenMint} to SOL`);
 
   const quoteResponse = await jupiter.quoteGet({
-    inputMint: tokenMint,
-    outputMint: 'So11111111111111111111111111111111111111112',
-    amount: balance.toString(),
     slippageBps: 100,
+    inputMint: tokenMint,
+    amount: balance.toString(),
+    outputMint: 'So11111111111111111111111111111111111111112',
   });
 
   if (!quoteResponse || !quoteResponse.outAmount) {
