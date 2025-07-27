@@ -1,3 +1,4 @@
+import PQueue from 'p-queue';
 import TelegramBot from 'node-telegram-bot-api';
 
 import { db } from './lib/db.js';
@@ -8,7 +9,13 @@ import isValidSolanaAddressOrToken from './utils/isValidSolanaAddress.js';
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
+const queue = new PQueue({ interval: 10000, intervalCap: 1 }); // 1 task every 10s
+
 bot.on('message', async (msg) => {
+  queue.add(() => handleMessage(msg));
+});
+
+async function handleMessage(msg) {
   const text = msg.text?.trim();
 
   if (!text) return;
@@ -42,6 +49,6 @@ bot.on('message', async (msg) => {
 
     console.log(error);
   }
-});
+}
 
 export default bot;
