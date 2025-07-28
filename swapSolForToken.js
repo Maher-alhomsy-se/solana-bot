@@ -6,6 +6,15 @@ import {
 import { jupiter, payer, connection } from './config/jupiter.js';
 
 async function swapSolToToken(tokenMint) {
+  payer.publicKey.toBase58();
+
+  const balance = await connection.getBalance(payer.publicKey);
+
+  if (balance < 1_000_000) {
+    console.log('⚠️ Balance is less than 0.001 SOL');
+    return;
+  }
+
   const quoteResponse = await jupiter.quoteGet({
     inputMint: 'So11111111111111111111111111111111111111112',
     outputMint: tokenMint,
