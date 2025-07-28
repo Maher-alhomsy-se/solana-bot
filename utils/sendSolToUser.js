@@ -5,7 +5,7 @@ import {
   Transaction,
 } from '@solana/web3.js';
 
-import { connection, payer } from '../config/jupiter';
+import { connection, payer } from '../config/jupiter.js';
 
 const senderWallet = payer;
 
