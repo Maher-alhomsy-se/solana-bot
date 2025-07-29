@@ -40,7 +40,7 @@ async function handleMessage(msg) {
       name,
       symbol,
       mint: text,
-      value: '0.001',
+      value: '5$',
       hash: signature,
       boughtAt: new Date(),
     });
