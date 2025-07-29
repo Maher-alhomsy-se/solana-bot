@@ -3,6 +3,7 @@ import {
   sendAndConfirmRawTransaction,
 } from '@solana/web3.js';
 
+import fetchTokenInfo from './utils/fetchTokenInfo.js';
 import { jupiter, payer, connection } from './config/jupiter.js';
 
 async function swapSolToToken(tokenMint) {
@@ -45,7 +46,9 @@ async function swapSolToToken(tokenMint) {
     tx.serialize()
   );
 
-  return signature;
+  const { name, symbol } = await fetchTokenInfo(tokenMint);
+
+  return { signature, name, symbol };
 }
 
 export default swapSolToToken;

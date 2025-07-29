@@ -32,14 +32,16 @@ async function handleMessage(msg) {
   }
 
   try {
-    const hash = await swapSolToToken(text);
+    const { signature, name, symbol } = await swapSolToToken(text);
 
     const collection = db.collection('token_buys');
 
     const doc = await collection.insertOne({
-      hash,
+      name,
+      symbol,
       mint: text,
       value: '0.001',
+      hash: signature,
       boughtAt: new Date(),
     });
 
