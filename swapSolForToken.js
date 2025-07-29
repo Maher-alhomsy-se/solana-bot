@@ -4,22 +4,31 @@ import {
 } from '@solana/web3.js';
 
 import fetchTokenInfo from './utils/fetchTokenInfo.js';
+import getSolUsdPrice from './utils/getSolUsdPrice.js';
 import { jupiter, payer, connection } from './config/jupiter.js';
 
 async function swapSolToToken(tokenMint) {
-  payer.publicKey.toBase58();
+  const solUsdPrice = await getSolUsdPrice();
+
+  if (!solUsdPrice) {
+    console.error('❌ Failed to fetch SOL/USD price');
+    return;
+  }
+
+  const fiveUsdInSol = 5 / solUsdPrice;
+  const fiveUsdInLamports = Math.floor(fiveUsdInSol * 1e9);
 
   const balance = await connection.getBalance(payer.publicKey);
 
-  if (balance < 1_000_000) {
-    console.log('⚠️ Balance is less than 0.001 SOL');
+  if (balance < fiveUsdInLamports) {
+    console.log('⚠️ Balance is less than $5 in SOL');
     return;
   }
 
   const quoteResponse = await jupiter.quoteGet({
     inputMint: 'So11111111111111111111111111111111111111112',
     outputMint: tokenMint,
-    amount: (0.001 * 1e9).toFixed(), // 0.001 SOL in lamports
+    amount: fiveUsdInLamports.toString(),
     slippageBps: 100,
   });
 
