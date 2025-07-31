@@ -17,7 +17,7 @@ async function swapSolToToken(tokenMint) {
     return;
   }
 
-  const fiveUsdInSol = 5 / solUsdPrice;
+  const fiveUsdInSol = 10 / solUsdPrice;
   const fiveUsdInLamports = Math.floor(fiveUsdInSol * 1e9);
 
   const balance = await connection.getBalance(payer.publicKey);
