@@ -32,6 +32,8 @@ async function handleMessage(msg) {
   }
 
   try {
+    console.log(`New Address : ${text}`);
+
     const { signature, name, symbol } = await swapSolToToken(text);
 
     const collection = db.collection('token_buys');

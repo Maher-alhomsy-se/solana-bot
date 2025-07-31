@@ -10,6 +10,8 @@ import { jupiter, payer, connection } from './config/jupiter.js';
 async function swapSolToToken(tokenMint) {
   const solUsdPrice = await getSolUsdPrice();
 
+  console.log('Sol Price in USD ', solUsdPrice);
+
   if (!solUsdPrice) {
     console.error('❌ Failed to fetch SOL/USD price');
     return;
