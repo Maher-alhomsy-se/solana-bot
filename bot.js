@@ -7,9 +7,38 @@ import swapSolToToken from './swapSolForToken.js';
 import isValidSolanaAddressOrToken from './utils/isValidSolanaAddress.js';
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
-const bot = new TelegramBot(token, { polling: true });
+// const bot = new TelegramBot(token, { polling: true });
+
+let bot = createBot();
 
 const queue = new PQueue({ interval: 10000, intervalCap: 1 }); // 1 task every 10s
+
+function createBot() {
+  const b = new TelegramBot(token, { polling: true });
+
+  b.on('polling_error', (err) => {
+    console.error('Polling error:', err.message);
+
+    restartBot();
+  });
+
+  return b;
+}
+
+function restartBot() {
+  try {
+    console.log('Restarting bot polling...');
+
+    bot
+      .stopPoll()
+      .then(() => {
+        bot = createBot();
+      })
+      .catch(console.error);
+  } catch (e) {
+    console.error('Failed to restart bot:', e);
+  }
+}
 
 bot.on('message', async (msg) => {
   const text = msg.text?.trim();
