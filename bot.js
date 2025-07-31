@@ -12,10 +12,6 @@ const bot = new TelegramBot(token, { polling: true });
 const queue = new PQueue({ interval: 10000, intervalCap: 1 }); // 1 task every 10s
 
 bot.on('message', async (msg) => {
-  queue.add(() => handleMessage(msg));
-});
-
-async function handleMessage(msg) {
   const text = msg.text?.trim();
 
   if (!text) return;
@@ -31,6 +27,10 @@ async function handleMessage(msg) {
     return;
   }
 
+  queue.add(() => handleMessage(text));
+});
+
+async function handleMessage(text) {
   try {
     console.log(`New Address : ${text}`);
 
