@@ -5,6 +5,7 @@ import {
   tokensCollection,
   balanceCollection,
   balanceHistoryCollection,
+  settingsCollection,
 } from './lib/db.js';
 import bot from './bot.js';
 import delay from './delay.js';
@@ -90,7 +91,57 @@ async function main() {
   }
 }
 
-cron.schedule('0 12 */7 * *', () => {
-  console.log(`\n🔄 Auto-sell triggered at ${new Date().toISOString()}`);
-  main();
-});
+async function scheduleAutoSell() {
+  try {
+    const settings = await settingsCollection.findOne({ _id: 'settings' });
+
+    if (!settings?.currentDate) {
+      console.error('❌ No currentDate found in settings.');
+      return;
+    }
+
+    // 2. Calculate target time (3 days + 4 hours after saved time)
+    const startTime = new Date(settings.currentDate);
+
+    const days3 = 3 * 24 * 60 * 60 * 1000;
+    const hours3 = 3 * 60 * 60 * 1000;
+    const minutes45 = 45 * 60 * 1000;
+
+    const target = startTime.getTime() + days3 + hours3 + minutes45;
+
+    const targetTime = new Date(target);
+
+    console.log('📅 Target auto-sell time:', targetTime.toString());
+
+    // 3. Calculate remaining delay
+    const now = new Date();
+    let delayMs = targetTime - now;
+
+    console.log('Delay MS: ', delayMs);
+
+    if (delayMs <= 0) {
+      console.log('⏰ Target time already passed. Running now...');
+      await main();
+      return;
+    }
+
+    console.log(
+      `⏳ Auto-sell will run in ${Math.floor(delayMs / 1000 / 60)} minutes.`
+    );
+
+    setTimeout(async () => {
+      console.log(`\n🔄 Auto-sell triggered at ${new Date().toISOString()}`);
+      await main();
+    }, delayMs);
+  } catch (error) {
+    console.error('❌ Error scheduling auto-sell:', error);
+  }
+}
+
+scheduleAutoSell();
+
+// cron.schedule('0 12 */7 * *', () => {
+//   console.log(`\n🔄 Auto-sell triggered at ${new Date().toISOString()}`);
+
+//   main();
+// });
